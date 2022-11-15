@@ -26,17 +26,48 @@ public class Model {
 	
 //La COMPLESSITA' del problema è n!, con numeri troppo alti va in tilt computazionale
 	public Set<Esame> calcolaSottoinsiemeEsami(int m) {
+		
 		//ripristino soluzione migliore
 		migliore= new HashSet<Esame>();
 		mediaMigliore=0.0;
 		Set <Esame> parziale= new HashSet<Esame>();
-		cerca(parziale, 0 ,m);
+		
+		//cerca(parziale, 0 ,m);
+		cerca2(parziale, 0 ,m);
 		
 		return migliore;	
 	}
 
 	
-	private void cerca(Set<Esame> parziale, int L, int m) {
+	private void cerca2(Set<Esame> parziale, int L, int m) {
+		int sommaCrediti=sommaCrediti(parziale);
+		if(sommaCrediti>m) //soluzione non valida
+			return;
+		if(sommaCrediti==m) {// soluzione valida, controllo se anche ottimale
+			double mediaVoti= calcolaMedia(parziale);
+			if(mediaVoti>mediaMigliore) {
+				migliore= new HashSet<Esame> (parziale);
+				mediaMigliore= mediaVoti;
+			}
+			return;
+		}
+		//sicuramente qui ho crediti < m
+		if(L==esami.size()) 
+			return;
+		
+		//provo ad aggiungere esami[L]
+		parziale.add(esami.get(L));
+		cerca2(parziale, L+1, m);
+		
+		//provo a "non aggiungere" esami[L]
+		parziale.remove(esami.get(L));
+		cerca2(parziale, L+1, m);
+		
+    }
+
+
+
+	/*private void cerca(Set<Esame> parziale, int L, int m) {
 		// controllo i casi terminali
 		int sommaCrediti=sommaCrediti(parziale);
 		if(sommaCrediti>m) //soluzione non valida
@@ -61,7 +92,7 @@ public class Model {
 				parziale.remove(e); //backtraking
 			}
 		}
-	}
+	}*/
 
 
 	public double calcolaMedia(Set<Esame> esami) {
